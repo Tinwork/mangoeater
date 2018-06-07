@@ -23,6 +23,37 @@ const schema = new mongoose.Schema({
 
 const Food = mongoose.model('food', schema);
 
+const getPreviousValue = (prev, key) => {
+  const country = prev.filter(p => {
+    const pKey = Object.keys(p)[0];
+    
+    if (key === pKey) {
+      return p;
+    }
+  });
+
+  return country[0][key];
+};
+
+const compareCountry = (prev, curr) => {
+  const newCtr = [];
+  const prevKeys = prev.map(d => Object.keys(d)[0]);
+
+  for (let i = 0; i < curr.length; i++) {
+    const key = Object.keys(curr[i])[0];
+    const currValue = curr[i][key];
+    if (prevKeys.includes(key)) {
+      const prevVal  = getPreviousValue(prev, key)
+      newCtr[i] = {};
+      newCtr[i][key] = prevVal + currValue;
+    } else {
+      newCtr.push(curr[i]);
+    }
+  }
+
+  return newCtr;
+};
+
 module.exports = {
   /**
    * Insert
@@ -49,7 +80,12 @@ module.exports = {
           }));
         } else {
           // update the country
-          
+          const ctr = doc.country;
+          const nCtr = compareCountry(ctr, data.country);
+          doc.country = nCtr;
+          doc.vegetarian = doc.vegetarian + data.vegetarian;
+
+          resolve(doc.save());
         }
       });
     })

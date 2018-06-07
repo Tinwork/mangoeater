@@ -10,7 +10,7 @@ module.exports = {
     const promises = [];
     
     for (let [key, v] of data) {
-      promsises.push(foodDao.insertOrUpdate({
+      promises.push(foodDao.insertOrUpdate({
         type: key,
         country: v.country,
         vegetarian: v.vegetarian

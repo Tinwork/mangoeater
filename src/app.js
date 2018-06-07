@@ -2,6 +2,7 @@ const express   = require('express');
 const absTwit   = require('./services/twitter/abstractTwit');
 const connector = require('./services/mongoose/connector/connector');
 const twitMger  = require('./services/twitter/twitManager');
+const foodAdaptor = require('./services/mongoose/adaptor/foodAdaptor');
 
 // create the app
 const app  = express();
@@ -34,9 +35,8 @@ app.get('/twit/food', (req, res) => {
       const hs = twit.filterHashTag(res.statuses);
       return twitMger.prepareFood(hs.hashtags, hs.t);
     })
-    .then(d => {
-      // save the map in database
-    })
+    .then(d => foodAdaptor.saveData(d))
+    .catch(err => console.log(err));
 
     res.send('yaa')
 });

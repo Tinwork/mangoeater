@@ -5,6 +5,7 @@ const _          = require('lodash');
 
 // just some countries...
 const foodCountryAttr = [
+  'asian',
   'china',
   'chinese',
   'laos',
@@ -23,13 +24,16 @@ const foodCountryAttr = [
   'bhutanese',
   'korea',
   'korean',
+  'indonesia',
   'indonesian',
+  'malaysia',
   'malaysian',
   'brunei',
   'iranian',
   'phillipines',
   'mongolian',
-  'indian'
+  'indian',
+  'india'
 ];
 /**
  * Order HashTag By Name
@@ -67,21 +71,22 @@ const countHashTag = (hashtags) => {
 const filterHashtagContent = (hashtags) => {
   return hashtags
     .filter(h => {
-      if (_.isEmpty(h)) {
-        return;
-      }
-
-      if (h.includes('food') && h !== 'food') {
-        return h;
+      if (!_.isEmpty(h)) {
+        h = h.toLowerCase();
+        if (h.includes('food') && h !== 'food') {
+          return h;
+        }
       }
     })
     .filter(h => {
+      h = h.toLowerCase();
       for (let i = 0; i < foodCountryAttr.length; i++) {
         if (h.includes(foodCountryAttr[i])) {
           return h;
         }
       }
-    });
+    })
+    .map(t => t.toLowerCase());
 };
 
 /**
@@ -90,7 +95,6 @@ const filterHashtagContent = (hashtags) => {
  * @param {Object} tweets 
  */
 const extractTweetUserData = (tweets, tags) => {
-
   if (_.isEmpty(tags)) {
     return;
   }
@@ -102,6 +106,7 @@ const extractTweetUserData = (tweets, tags) => {
     }
 
     for (let i = 0; i < hashtags.length; i++) {
+      //console.log(hashtags);
       if (tags.includes(hashtags[i].text.toLowerCase())) {
         tweet.hs = hashtags[i].text.toLowerCase();
         return tweet;
@@ -220,8 +225,12 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const specialtags = filterHashtagContent(hashtags);
       const foodData    = extractTweetUserData(untreatTweet, specialtags);
-      const model = orderFoodData(foodData)
 
+      if (_.isEmpty(foodData)) {
+        return reject('no corresponding tweet to asian food');
+      }
+
+      const model = orderFoodData(foodData)
       resolve(model);
     });
   }

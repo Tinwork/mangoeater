@@ -1,5 +1,7 @@
 const express    = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
+
 const absTwit   = require('./services/twitter/abstractTwit');
 const connector = require('./services/mongoose/connector/connector');
 const twitMger  = require('./services/twitter/twitManager');
@@ -16,7 +18,7 @@ connector.init();
 
 // get the damn thing
 app.get('/', (req, res) => {
-  res.send('yay');
+  res.sendFile(path.join(__dirname + '/index.html'));
 });
 
 app.post('/twit/hashtags', (req, res) => {

@@ -15,7 +15,7 @@ const getSortFilter = filter => {
 module.exports = {
   get(filter, sorting) {
     if (_.isEmpty(filter)) {
-      return Prromise.reject('filter is empty');
+      filter = {};
     }
 
     const sortType = getSortFilter(sorting);

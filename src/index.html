@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <style>
+      .col-12 {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h2>Hashtag chart on most popular hashtag on asian food</h2>
+          <hr/>
+          <canvas id="hashtagChart" width="600" height="200"></canvas>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <h2>Hashtag chart on most popular hashtag on chinese food</h2>
+          <hr/>
+          <canvas id="chineseTagChart" width="600" height="200"></canvas>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <h2>Least hashtag on food</h2>
+          <hr/>
+          <canvas id="leastFoodChart" width="400" height="400"></canvas>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <h2>Asian food consider as healthy ?</h2>
+          <hr/>
+          <canvas id="healthyFoodChart" width="400" height="400"></canvas>
+        </div>
+      </div>
+      <div class="row">
+         <div class="col-12">
+           <h2>Most popular asian food ?</h2>
+           <hr/>
+           <canvas id="asianFoodChart" width="400" height="400"></canvas>
+         </div>
+      </div>
+      <div class="row">
+          <div class="col-12">
+            <h2>Most popular type of asian food ?</h2>
+            <hr/>
+            <canvas id="typeAsianFoodChart" width="400" height="400"></canvas>
+          </div>
+      </div>
+    </div>
+    <script>
+      function fetchTwit(endpoint, data) {
+        const baseURL = 'http://localhost:3000/twit/'
+        endpoint = baseURL + endpoint;
+        
+        return fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+      }
+
+      function hashtagChart() {
+        const ctx = document.getElementById("hashtagChart");
+
+        fetchTwit('hashtag/list', {filter: {}, sort: "popular"})
+          .then(res => {
+            const labs = res.map(d => d.hashtag);
+            const value = res.map(d => d.count);
+
+            const data = {
+              datasets: [{
+                data: value,
+                backgroundColor: ['#FB6786', '#FDCB69', '#43A4E5', '#EC9AAC', '#96BE56']
+              }],
+              labels: labs,
+              
+            };
+
+            const piechart = new Chart(ctx, {
+              type: 'pie',
+              data
+            })
+          })
+      }
+
+      function chineseHashtagChart() {
+        const ctx = document.getElementById("chineseTagChart");
+
+        fetchTwit('hashtag/list', {filter: "chinese", sort: "popular"})
+          .then(res => {
+            const labs = res.map(d => d.hashtag);
+            const value = res.map(d => d.count);
+
+            const data = {
+              datasets: [{
+                data: value,
+                backgroundColor: ['#FB6786', '#FDCB69', '#43A4E5', '#EC9AAC', '#96BE56']
+              }],
+              labels: labs,
+              
+            };
+
+            const piechart = new Chart(ctx, {
+              type: 'pie',
+              data
+            })
+          })
+      }
+
+      hashtagChart();
+      chineseHashtagChart();
+    </script>
+  </body>
+</html>

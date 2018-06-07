@@ -1,23 +1,29 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 
-const schema = new moongose.Schema({
-  name: 'string',
+/**
+ * Example
+ * 
+ * {
+ *  type: 'chinesefood',
+ *  country: [{
+ *   France: 1,
+ *   China: 2,
+ *   Laos: 2,
+ *   Cambodia: 3
+ *  }],
+ *  vegetarian: 3
+ * }
+ */
+const schema = new mongoose.Schema({
   type: 'string',
   country: 'array',
-  ingredient: 'array',
   vegetarian: 'boolean',
-  slug: 'string'
 });
 
+const Food = mongoose.model('food', schema);
+
 module.exports = {
-  /**
-   * Create
-   *    Create the schema of the model
-   */
-  init() {
-    this.Food = mongoose.model('food', schema);
-  },
   /**
    * Insert
    *  

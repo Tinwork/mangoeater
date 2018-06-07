@@ -15,21 +15,28 @@ app.get('/', (req, res) => {
   res.send('yay');
 });
 
-app.get('/twit/:criterion', (req, res) => {
+app.get('/twit/hashtags', (req, res) => {
   // use the twitter api in order to retrieve the tweet
-  twit.getTwitByCategory('#food')
+  twit.getTwitByCategory('#asianfood')
     .then(res => {
-      if (!res.hasOwnProperty('statuses')) {
-        return Promise.reject('no status');
-      }
-
       const hs = twit.filterHashTag(res.statuses);
-      return twitMger.saveHashtag(hs);
+      return twitMger.saveHashtag(hs.hashtag);
     })
     .then(() => console.log('save'))
     .catch(err => console.log(err));
 
     res.send('good');
 });
+
+app.get('/twit/food', (req, res) => {
+  twit.getTwitByCategory('#asianfood')
+    .then(res => {
+      const hs = twit.filterHashTag(res.statuses);
+      return twitMger.saveFood(hs.hashtags, hs.t);
+    })
+
+    res.send('yaa')
+});
+
 
 app.listen(3000, () => console.log('server has start'));

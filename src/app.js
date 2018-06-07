@@ -32,7 +32,10 @@ app.get('/twit/food', (req, res) => {
   twit.getTwitByCategory('#asianfood')
     .then(res => {
       const hs = twit.filterHashTag(res.statuses);
-      return twitMger.saveFood(hs.hashtags, hs.t);
+      return twitMger.prepareFood(hs.hashtags, hs.t);
+    })
+    .then(d => {
+      // save the map in database
     })
 
     res.send('yaa')

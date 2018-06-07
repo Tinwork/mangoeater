@@ -121,11 +121,75 @@ const extractTweetUserData = (tweets, tags) => {
     return {
       country: langcode.getCountryByCode(tweet.user.lang),
       type   : tweet.hs,
-      vegetarian: veggie 
+      veg    : veggie 
     }
   });
 
   return filteredTweet;
+};
+
+/**
+ * Update Country
+ *  Smelly code yes.
+ * 
+ * @param {Array} ctr 
+ * @return {Array}
+ */
+const updateCountry = (ctr, nCtr) => {
+  const copy = ctr.slice();
+  let update = false;
+  let i = 0;
+  for (let idx = 0; idx < copy.length; idx++) {
+    if (copy[idx][nCtr]) {
+      update = true;
+      i = idx;
+    }
+  }
+
+  if (update) {
+    // dangerous
+    copy[i][nCtr] = ctr[i][nCtr] + 1; 
+  } else {
+    const obj = {};
+    obj[nCtr] = 1;
+    copy.push(obj);
+  }
+
+  return copy;
+};
+
+/**
+ * Order Food Data
+ *  Check and merge the type of food
+ *  Dirty code but in a hurry !
+ * @param {Array} foodModel
+ * @return {Map}
+ */
+const orderFoodData = foodModel => {
+  const formatModel = new Map();
+
+  for (let i = 0; i < foodModel.length; i++) {
+    const food = foodModel[i];
+    const v = formatModel.get(food.type);
+
+    if (_.isEmpty(v)) {
+      // bad but anyway
+      const cr = {};
+      cr[food.country] = 1;
+      // init the data in the map
+      formatModel.set(food.type, {
+        country   : [cr],
+        vegetarian: food.veg ? 1 : 0
+      });
+    } else {
+      // update the value of the map
+      v.vegetarian = v.vegetarian + (food.veg ? 1 : 0);
+      // check if the name of the country
+      v.country = updateCountry(v.country, food.country);
+    }
+  }
+
+  return formatModel;
 };
 
 module.exports = {
@@ -152,9 +216,14 @@ module.exports = {
    * @param {Array} hashtags
    * 
    */
-  saveFood(hashtags, untreatTweet) {
-    const specialtags = filterHashtagContent(hashtags);
-    const foodData = extractTweetUserData(untreatTweet, specialtags);
+  prepareFood(hashtags, untreatTweet) {
+    return new Promise((resolve, reject) => {
+      const specialtags = filterHashtagContent(hashtags);
+      const foodData    = extractTweetUserData(untreatTweet, specialtags);
+      const model = orderFoodData(foodData)
+
+      resolve(model);
+    });
   }
 };
 

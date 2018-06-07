@@ -18,7 +18,7 @@ const _ = require('lodash');
 const schema = new mongoose.Schema({
   type: 'string',
   country: 'array',
-  vegetarian: 'boolean',
+  vegetarian: 'number',
 });
 
 const Food = mongoose.model('food', schema);
@@ -27,19 +27,39 @@ module.exports = {
   /**
    * Insert
    *  
-   * @param {Array} data
+   * @param {Object} data
    * @throws
    */
-  async insert(data) {
+  async insertOrUpdate(data) {
     if (_.isEmpty(data)) {
       throw new Error('data is empty');
     }
+
+    return new Promise((resolve, reject) => {
+      Food.findOne({type: data.type}, (err, doc) => {
+        if (err) {
+          reject(err);
+        }
+
+        if (_.isEmpty(doc)) {
+          return resolve(Food.create({
+            type: data.type,
+            country: data.country,
+            vegetarian: data.vegetarian
+          }));
+        } else {
+          // update the country
+          
+        }
+      });
+    })
+
 
     if (!_.isArray(data)) {
       data = [data];
     }
 
-    return this.Food.insertMany(data).exec()
+    return Food.insertMany(data).exec()
   },
   /**
 

@@ -106,9 +106,9 @@ module.exports = {
   async find(filter, one) {
     let res = null;
     if (one) {
-      res = await this.Food.findOne(filter).exec();
+      res = await Food.findOne(filter).exec();
     } else {
-      res = await this.Food.find(filter).exec();
+      res = await Food.find(filter).exec();
     }
 
     return res;

@@ -43,10 +43,15 @@ module.exports = {
    * @param {Object} query 
    * @return {Promise}
    */
-  async find(query) {
+  async find(filter, sort) {
     let res = null;
 
-    res = await this.Food.find(filter).exec();
+    if (_.isEmpty(sort)) {
+      res = await Hashtag.find(filter).limit(5);
+    } else {
+      res = await Hashtag.find(filter).sort(sort).limit(5);
+    }
+
     return res;
   }
 }

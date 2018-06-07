@@ -1,14 +1,14 @@
-const tagDao = require('../dao/hashtag');
+const hashtagDao = require('../dao/hashtag');
 const _ = require('lodash');
 
 const getSortFilter = filter => {
   switch (filter) {
-    case 'popular':
+    case 'least':
       return {count: 1}
-    case 'least': 
+    case 'popular': 
       return {count: -1}
     default:
-      return {}
+      return null
   }
 };
 
@@ -19,6 +19,8 @@ module.exports = {
     }
 
     const sortType = getSortFilter(sorting);
-    const filter = {hashtag: /"filter"/}
+    const f = {"hashtag": {$regex: '.*'+filter+'.*'}};
+
+    return hashtagDao.find(f, sortType);
   }
 }

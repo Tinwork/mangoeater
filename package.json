@@ -1,0 +1,25 @@
+{
+  "name": "mangoeater",
+  "version": "1.0.0",
+  "description": "just a mongodb project for school ~",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tinwork/mangoeater.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tinwork/mangoeater/issues"
+  },
+  "homepage": "https://github.com/Tinwork/mangoeater#readme",
+  "devDependencies": {
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "mongoose": "^5.1.4",
+    "twit": "^2.2.10"
+  }
+}

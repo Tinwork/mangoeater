@@ -35,7 +35,13 @@ app.post('/twit/hashtags', (req, res) => {
 });
 
 app.post('/twit/food', (req, res) => {
-  twit.getTwitByCategory('#asianfood')
+  let criteria = req.body.criteria;
+
+  if (criteria === undefined) {
+    criteria = 'asianfood';
+  }
+
+  twit.getTwitByCategory('#'+criteria)
     .then(res => {
       const hs = twit.filterHashTag(res.statuses);
       return twitMger.prepareFood(hs.hashtags, hs.t);
@@ -47,7 +53,6 @@ app.post('/twit/food', (req, res) => {
 
 app.post('/twit/food/list', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-
   foodAdaptor
     .get(req.body.filter, req.body.singleRes)
     .then(d => {

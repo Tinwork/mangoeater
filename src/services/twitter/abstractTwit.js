@@ -55,7 +55,7 @@ class AbstractTwit {
     }
 
     return new Promise((resolve, reject) => {
-      this.twit.get('search/tweets', {q: criteria, count: 600}, (err, data, res) => {
+      this.twit.get('search/tweets', {q: criteria, count: 400}, (err, data, res) => {
         if (!_.isEmpty(err)) {
           reject(err);
         }

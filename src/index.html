@@ -21,37 +21,50 @@
       </div>
       <div class="row">
         <div class="col-12">
-          <h2>Hashtag chart on most popular hashtag on chinese food</h2>
+          <h2>Hashtag chart on most popular hashtag on the least popular asian food</h2>
           <hr/>
           <canvas id="chineseTagChart" width="600" height="200"></canvas>
         </div>
       </div>
       <div class="row">
         <div class="col-12">
-          <h2>Least hashtag on food</h2>
+          <h2>Popularity of chinese food by country</h2>
           <hr/>
-          <canvas id="leastFoodChart" width="400" height="400"></canvas>
+          <canvas id="typeFoodChart" width="600" height="400"></canvas>
         </div>
       </div>
       <div class="row">
         <div class="col-12">
-          <h2>Asian food consider as healthy ?</h2>
+          <h2>Most type of asian food consider vegetarian ?</h2>
           <hr/>
-          <canvas id="healthyFoodChart" width="400" height="400"></canvas>
+          <canvas id="healthyFoodChart" width="600" height="400"></canvas>
         </div>
       </div>
       <div class="row">
          <div class="col-12">
-           <h2>Most popular asian food ?</h2>
+           <h2>Popularity of each food by country</h2>
+           <div class="input-group mb-3">
+            <select class="custom-select" id="inputGroupSelect02">
+              <option selected>Choose...</option>
+              <option value="japanese">Japanese</option>
+              <option value="korean">Korean</option>
+              <option value="thai">Thai</option>
+              <option value="taiwan">Taiwanese</option>
+              <option value="vietnamese">Vietnam</option>
+            </select>
+            <div class="input-group-append">
+              <label class="input-group-text" for="inputGroupSelect02">Options</label>
+            </div>
+          </div>
            <hr/>
-           <canvas id="asianFoodChart" width="400" height="400"></canvas>
+           <canvas id="eachFoodChart" width="600" height="400"></canvas>
          </div>
       </div>
       <div class="row">
           <div class="col-12">
             <h2>Most popular type of asian food ?</h2>
             <hr/>
-            <canvas id="typeAsianFoodChart" width="400" height="400"></canvas>
+            <canvas id="popularAsianFoodChart" width="600" height="400"></canvas>
           </div>
       </div>
     </div>
@@ -98,7 +111,7 @@
       function chineseHashtagChart() {
         const ctx = document.getElementById("chineseTagChart");
 
-        fetchTwit('hashtag/list', {filter: "chinese", sort: "popular"})
+        fetchTwit('hashtag/list', {filter: {}, sort: "least"})
           .then(res => {
             const labs = res.map(d => d.hashtag);
             const value = res.map(d => d.count);
@@ -119,8 +132,155 @@
           })
       }
 
+      function typeFoodChart() {
+        const ctx = document.getElementById("typeFoodChart");
+
+        fetchTwit('food/list', {filter: "chinese"})
+          .then(res => {
+            res = res[0];
+            const labs = res.country.map(d => {
+              const key = Object.keys(d)[0];
+
+              return key;
+            });
+
+            const value = res.country.map(d => {
+              const key = Object.keys(d)[0];
+              return d[key];
+            });
+
+            const data = {
+              datasets: [{
+                label: 'Retweet of this kind of food',
+                data: value,
+                backgroundColor: ['#FB6786', '#FDCB69', '#43A4E5', '#EC9AAC', '#96BE56', '#F5503D']
+              }],
+              labels: labs,
+              
+            };
+
+            const piechart = new Chart(ctx, {
+              type: 'bar',
+              data
+            })
+          })
+      }
+
+      function mostPopularAsianFood() {
+        const ctx = document.getElementById("popularAsianFoodChart");
+
+        fetchTwit('food/list', {filter: "all"})
+          .then(res => {
+            const value = res.map(d => {
+              let add = 0;
+              Object.keys(d.country).forEach(key => {
+                const k = Object.keys(d.country[key])[0];
+                const v = d.country[key][k];
+
+                add = add + v;
+              });
+
+              return add;
+            })
+
+            const labs = res.map(d => {
+              return d.type;
+            });
+
+            const data = {
+              datasets: [{
+                label: 'Number of tweet for chinese food by country',
+                data: value,
+                backgroundColor: ['#FB6786', '#FDCB69', '#43A4E5', '#EC9AAC', '#96BE56', '#F5503D']
+              }],
+              labels: labs,
+              
+            };
+
+            const piechart = new Chart(ctx, {
+              type: 'bar',
+              data
+            })
+          })
+      }
+
+      function vegAsianFood() {
+        const ctx = document.getElementById("healthyFoodChart");
+
+        fetchTwit('food/list', {filter: "all"})
+          .then(res => {
+            const value = res.map(d => {
+              return d.vegetarian
+            })
+
+            const labs = res.map(d => {
+              return d.type;
+            });
+
+            const data = {
+              datasets: [{
+                label: 'Type of food consider veggie',
+                data: value,
+                backgroundColor: ['#FB6786', '#FDCB69', '#43A4E5', '#EC9AAC', '#96BE56', '#F5503D']
+              }],
+              labels: labs,
+              
+            };
+
+            const piechart = new Chart(ctx, {
+              type: 'bar',
+              data
+            })
+          })
+      }
+
+      function eachtype(va) {
+        const ctx = document.getElementById("eachFoodChart");
+
+        fetchTwit('food/list', {filter: va})
+          .then(res => {
+            res = res[0];
+            const labs = res.country.map(d => {
+              const key = Object.keys(d)[0];
+
+              return key;
+            });
+
+            const value = res.country.map(d => {
+              const key = Object.keys(d)[0];
+              return d[key];
+            });
+
+            const data = {
+              datasets: [{
+                label: `Retweet of ${res.type} food by country`,
+                data: value,
+                backgroundColor: ['#FB6786', '#FDCB69', '#43A4E5', '#EC9AAC', '#96BE56', '#F5503D']
+              }],
+              labels: labs,
+              
+            };
+
+            const barchart = new Chart(ctx, {
+              type: 'bar',
+              data
+            })
+          })
+      }
+
+      let e = document.getElementById("inputGroupSelect02");
+      e.addEventListener('change', function(){
+        let va = this.options[this.selectedIndex].value;
+        console.log(va);
+        eachtype(va);
+      })
+
       hashtagChart();
       chineseHashtagChart();
+      typeFoodChart();
+      mostPopularAsianFood();
+      vegAsianFood();
+      eachtype('japanese');
     </script>
   </body>
 </html>

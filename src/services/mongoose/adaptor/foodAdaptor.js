@@ -12,10 +12,14 @@ const getFilter = filter => {
       return {'type': 'chinesefood'};
     case 'indian':
       return {'type': 'indianfood'};
-    case 'vietnamesefood':
+    case 'vietnamese':
       return {'type': 'vietnamesefood'};
-    case 'japanesefood':
+    case 'japanese':
       return {'type': 'japanesefood'};
+    case 'korean':
+      return {'type': 'koreanfood'};
+    case 'taiwan': 
+      return {'type': 'taiwanesefood'};
     default:
       return {}
   };

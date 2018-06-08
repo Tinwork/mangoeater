@@ -101,28 +101,32 @@ const extractTweetUserData = (tweets, tags) => {
 
   const filteredTweet = tweets.filter(tweet => {
     const hashtags = tweet.entities.hashtags; 
-    if (_.isEmpty(hashtags)) {
-      return;
-    }
+    if (!_.isEmpty(hashtags)) {
+      const fhashtag = hashtags.filter(f => {
+        const key = f.text;
 
-    for (let i = 0; i < hashtags.length; i++) {
-      //console.log(hashtags);
-      if (tags.includes(hashtags[i].text.toLowerCase())) {
-        tweet.hs = hashtags[i].text.toLowerCase();
+        if (tags.includes(key.toLowerCase())) {
+          tweet.hs = key.toLowerCase();
+          return f;
+        }
+      });
+
+      if (fhashtag.length > 0) {
         return tweet;
-      }
-    } 
+      } 
+    }
   })
   .map(tweet => {
     let veggie = false;
     const hashtags = tweet.entities.hashtags; 
     // check if the tweet has the hashtag vegetarian...
     for (let i = 0; i < hashtags.length; i++) {
-      if (hashtags[i].text === 'vegan') {
+      if (hashtags[i].text === 'veggie') {
         veggie = true;
       }
     }
 
+    //console.log(tweet.hs)
     return {
       country: langcode.getCountryByCode(tweet.user.lang),
       type   : tweet.hs,
